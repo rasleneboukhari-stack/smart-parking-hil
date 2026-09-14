@@ -35,3 +35,21 @@ It receives simulated sensor behavior through the HIL environment, measures the 
 - Real-time parking status
 - Reservation workflow
 - Hardware-in-the-loop validation
+
+
+## Screenshots
+
+![hil_debug.png](docs/images/hil_debug.png)
+
+![simulator_overview.png](docs/images/simulator_overview.png)
+
+![parking_selection.png](docs/images/parking_selection.png)
+
+![reservation_notification.png](docs/images/reservation_notification.png)
+
+![parked_car_status.png](docs/images/parked_car_status.png)
+
+![mobile_map_view.png](docs/images/mobile_map_view.png)
+
+![reservation_flow.png](docs/images/reservation_flow.png)
+
