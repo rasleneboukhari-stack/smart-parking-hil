@@ -15,7 +15,7 @@ The parking layout is flexible and configurable. New layouts, zones, and sensor 
 
 ## Architecture
 
-![System Architecture](docs/images/architecture.png)
+![System Architecture](docs/architecture.png)
 
 ## Components
 
@@ -23,7 +23,7 @@ The parking layout is flexible and configurable. New layouts, zones, and sensor 
 
 Generates parking scenarios and virtual sensor distances.
 
-![Parking Simulator](docs/images/simulator.png)
+![Parking Simulator](docs/simulator.png)
 
 ### Backend Gateway
 
@@ -33,7 +33,7 @@ FastAPI service responsible for:
 - Providing APIs
 - Communicating with the HIL bridge
 
-![Gateway](docs/images/gateway.png)
+![Gateway](docs/gateway.png)
 
 ### Hardware-in-the-Loop System
 
@@ -58,7 +58,7 @@ Custom Wokwi HIL Chip
 ESP32-S3 Controller
 ```
 
-![HIL System](docs/images/hil_system.png)
+![HIL System](docs/hil_system.png)
 
 ### Web Application
 
@@ -68,7 +68,7 @@ Provides:
 - Reservations
 - Driver interface
 
-![Web Application](docs/images/web_app.png)
+![Web Application](docs/web_app.png)
 
 ## Running
 
@@ -92,7 +92,6 @@ smart-parking-hil/
 ├── src/
 ├── layouts/
 ├── docs/
-│   └── images/
 ├── platformio.ini
 ├── run_all.sh
 └── README.md
