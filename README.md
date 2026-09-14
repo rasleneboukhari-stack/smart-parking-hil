@@ -1,125 +1,122 @@
-# Smart Parking System
+# Smart Parking System - Hardware-in-the-Loop Simulation
 
-A complete embedded smart parking system combining simulation, backend
-services, Hardware-in-the-Loop (HIL), embedded firmware, and a web
-application.
+A complete smart parking system combining a 2D parking simulator, backend gateway, embedded ESP32 controller, custom Hardware-in-the-Loop (HIL) sensor simulation, and a web application.
 
 ## Overview
 
-The system contains:
+The system simulates a smart parking infrastructure:
+- Vehicle movement simulation
+- Virtual ultrasonic sensors
+- Backend processing
+- ESP32 embedded control
+- Web application for monitoring and reservations
 
--   2D parking simulator
--   FastAPI backend gateway
--   Python HIL bridge
--   Wokwi custom HIL chip
--   ESP32-S3 embedded controller
--   Web application
-
-The parking layout is flexible and configurable. Different parking
-layouts, zones, and parking spot configurations can be supported by
-changing configuration files without modifying the core architecture.
+The parking layout is flexible and configurable. New layouts, zones, and sensor configurations can be added without changing the main architecture.
 
 ## Architecture
 
-Communication flow:
+![System Architecture](docs/images/architecture.png)
 
-    2D Parking Simulator
-            |
-            | HTTP / REST
-            v
-    FastAPI Gateway
-            |
-            | Internal API
-            v
-    Python HIL Bridge
-            |
-            | RFC2217 Serial
-            v
-    Wokwi Custom HIL Chip
-            |
-            | Ultrasonic Echo Simulation
-            v
-    ESP32-S3 Controller
-            |
-            | MQTT
-            v
-    Web Application
+## Components
 
-![Architecture](docs/images/architecture.png)
+### Simulation Environment
 
-## Simulation Environment
+Generates parking scenarios and virtual sensor distances.
 
-The simulator generates vehicle movements, parking scenarios, and
-virtual sensor distances.
+![Parking Simulator](docs/images/simulator.png)
 
-![Simulator](docs/images/simulator.png)
+### Backend Gateway
 
-## Backend Gateway
-
-The FastAPI gateway manages parking states, receives simulation data,
-exposes APIs, and communicates with the HIL bridge.
+FastAPI service responsible for:
+- Receiving simulation data
+- Managing parking states
+- Providing APIs
+- Communicating with the HIL bridge
 
 ![Gateway](docs/images/gateway.png)
 
-## Hardware-in-the-Loop
+### Hardware-in-the-Loop System
 
-The HIL system allows the ESP32 firmware to interact with simulated
-sensors.
+Communication flow:
 
-Flow:
+```
+Simulator
+ |
+ | HTTP distance data
+ v
+FastAPI Gateway
+ |
+ v
+Python HIL Bridge
+ |
+ | RFC2217 Serial
+ v
+Custom Wokwi HIL Chip
+ |
+ | Ultrasonic Echo pulses
+ v
+ESP32-S3 Controller
+```
 
-1.  Simulator generates distances.
-2.  HIL bridge converts data into sensor commands.
-3.  Wokwi custom chip generates ultrasonic echo pulses.
-4.  ESP32 processes the signals like real hardware.
+![HIL System](docs/images/hil_system.png)
 
-![HIL](docs/images/hil_system.png)
+### Web Application
 
-## Web Application
+Provides:
+- Live parking status
+- Parking map visualization
+- Reservations
+- Driver interface
 
-The web interface provides:
-
--   Live parking status
--   Reservations
--   Vehicle tracking
--   Notifications
-
-![Web App](docs/images/web_app.png)
+![Web Application](docs/images/web_app.png)
 
 ## Running
 
-``` bash
+Requirements:
+- Python 3
+- PlatformIO
+- Wokwi CLI
+
+Start the complete system:
+
+```bash
 ./run_all.sh
 ```
 
-Starts the gateway, HIL bridge, simulator, and web application.
+## Project Structure
 
-## Structure
-
-    smart-parking-hil/
-    ├── frontend/
-    ├── gateway/
-    ├── src/
-    ├── layouts/
-    ├── docs/
-    ├── run_all.sh
-    └── README.md
+```
+smart-parking-hil/
+├── frontend/
+├── gateway/
+├── src/
+├── layouts/
+├── docs/
+│   └── images/
+├── platformio.ini
+├── run_all.sh
+└── README.md
+```
 
 ## Technologies
 
--   ESP32-S3
--   C++
--   Python
--   FastAPI
--   MQTT
--   PySerial
--   Wokwi
--   PlatformIO
--   HTML/CSS/JavaScript
--   Git
--   Linux
+Embedded:
+- ESP32-S3
+- C++
+- PlatformIO
+- Wokwi
 
-## Goals
+Backend:
+- Python
+- FastAPI
+- PySerial
 
-This project demonstrates embedded development, HIL testing, IoT
-communication, backend design, and full system integration.
+Communication:
+- HTTP
+- MQTT
+- RFC2217 Serial
+
+Frontend:
+- HTML
+- CSS
+- JavaScript
