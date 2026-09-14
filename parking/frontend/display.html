@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover"
+    >
+    <meta name="theme-color" content="#f2f3ef">
+
+    <title>Parkside — Entrance Terminal</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/display.css?v=display-static-v9-20260909"
+    >
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+        defer>
+    </script>
+
+    <script
+        src="/static/display.js?v=display-static-v9-20260909"
+        defer
+    ></script>
+</head>
+
+<body>
+<main class="display-shell">
+    <header class="display-header">
+        <div class="brand-block">
+            <div class="brand-mark">
+                P<span>•</span>
+            </div>
+
+            <div>
+                <strong>parkside<span>.</span></strong>
+                <small>SMART PARKING · ENTRANCE TERMINAL</small>
+            </div>
+        </div>
+
+        <div
+            id="display-connection"
+            class="live-pill"
+            data-state="connecting"
+        >
+            <i></i>
+            <span id="display-connection-text">Connecting</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-copy">
+            <span class="eyebrow">WELCOME</span>
+            <h1>Choose your space.</h1>
+            <p>
+                Explore the live garage map, select a free bay,
+                then scan your reservation to your phone.
+            </p>
+        </div>
+
+        <div class="hero-count">
+            <strong id="display-free-count">—</strong>
+            <span>spaces available</span>
+        </div>
+    </section>
+
+    <section
+        class="display-controls"
+        aria-label="Parking map filters"
+    >
+        <div class="control-block">
+            <span>FLOOR</span>
+            <div
+                id="display-floor-tabs"
+                class="tabs"
+            ></div>
+        </div>
+
+        <div class="control-block">
+            <span>ZONE</span>
+            <div
+                id="display-zone-tabs"
+                class="tabs"
+            ></div>
+        </div>
+    </section>
+
+    <section class="garage-screen">
+        <header class="garage-toolbar">
+            <div>
+                <span class="eyebrow">LIVE PARKING MAP</span>
+                <h2 id="display-location-title">
+                    Ground · All zones
+                </h2>
+            </div>
+
+            <div class="garage-toolbar-right">
+                <div class="mini-stats">
+                    <span>
+                        <i class="free-dot"></i>
+                        <b id="display-free-mini">—</b>
+                        free
+                    </span>
+
+                    <span>
+                        <i class="occupied-dot"></i>
+                        <b id="display-occupied-mini">—</b>
+                        occupied
+                    </span>
+
+                    <span>
+                        <i class="reserved-dot"></i>
+                        <b id="display-reserved-mini">—</b>
+                        reserved
+                    </span>
+                </div>
+
+
+            </div>
+        </header>
+
+        <div
+            id="display-map-viewport"
+            class="display-map-viewport"
+            role="img"
+            aria-label="Live parking map. Tap an available space to reserve it."
+        >
+            <canvas
+                id="display-map-canvas"
+                class="display-map-canvas"
+                aria-hidden="true"
+            ></canvas>
+
+            <div
+                id="display-loading"
+                class="display-loading"
+            >
+                <span class="loader"></span>
+                <p>Loading parking layout…</p>
+            </div>
+
+
+        </div>
+    </section>
+
+    <footer class="display-footer">
+        <div class="legend">
+            <span>
+                <i class="legend-bay free"></i>
+                Available · tap to reserve
+            </span>
+
+            <span>
+                <i class="legend-bay occupied"></i>
+                Occupied
+            </span>
+
+            <span>
+                <i class="legend-bay reserved"></i>
+                Reserved
+            </span>
+        </div>
+
+        <div class="footer-note">
+            QR ticket transfers the reservation to your phone.
+        </div>
+
+        <div id="display-updated">
+            Waiting for live data
+        </div>
+    </footer>
+</main>
+
+<div
+    id="spot-dialog"
+    class="dialog-backdrop"
+    hidden
+>
+    <section
+        class="dialog-card spot-dialog-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="spot-dialog-title"
+    >
+        <button
+            id="spot-dialog-close"
+            class="dialog-close"
+            type="button"
+            aria-label="Close"
+        >×</button>
+
+        <span class="eyebrow">SELECTED SPACE</span>
+
+        <div class="selected-space">
+            <div
+                id="selected-spot-label"
+                class="selected-spot-number"
+            >P001</div>
+
+            <div>
+                <h2 id="spot-dialog-title">
+                    Reserve this parking space?
+                </h2>
+
+                <p id="selected-spot-location">
+                    Ground · Zone A
+                </p>
+            </div>
+        </div>
+
+        <div class="availability-confirmation">
+            <i></i>
+            <span>
+                Live status:
+                <strong>Available</strong>
+            </span>
+        </div>
+
+        <p class="dialog-copy">
+            This space will be held for you.
+            Scan the QR ticket to move the reservation to your phone.
+        </p>
+
+        <div class="dialog-actions">
+            <button
+                id="spot-dialog-back"
+                class="secondary-action"
+                type="button"
+            >
+                Choose another
+            </button>
+
+            <button
+                id="reserve-selected-spot"
+                class="primary-action"
+                type="button"
+            >
+                Reserve this space
+            </button>
+        </div>
+
+        <p
+            id="reservation-error"
+            class="dialog-error"
+            hidden
+        ></p>
+    </section>
+</div>
+
+<div
+    id="ticket-dialog"
+    class="dialog-backdrop ticket-backdrop"
+    hidden
+>
+    <section
+        class="dialog-card ticket-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ticket-title"
+    >
+        <div class="ticket-topline">
+            <div>
+                <span class="eyebrow">RESERVATION CONFIRMED</span>
+                <h2 id="ticket-title">Your parking ticket</h2>
+            </div>
+
+            <span class="ticket-live">
+                <i></i>
+                ACTIVE
+            </span>
+        </div>
+
+        <div class="ticket-body">
+            <div class="ticket-space">
+                <span>YOUR SPACE</span>
+                <strong id="ticket-spot">P001</strong>
+                <p id="ticket-location">
+                    Ground · Zone A
+                </p>
+
+                <div class="ticket-route">
+                    <span>↗</span>
+
+                    <div>
+                        <small>AFTER ENTERING</small>
+                        <strong id="ticket-direction">
+                            Follow signs to Ground · Zone A
+                        </strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ticket-claim">
+                <div
+                    id="ticket-qr"
+                    class="ticket-qr"
+                    aria-label="Reservation QR code"
+                ></div>
+
+                <strong>Scan with your phone</strong>
+
+                <p>
+                    Continue navigation, confirm arrival,
+                    and find your car from your phone.
+                </p>
+            </div>
+        </div>
+
+        <div
+            id="localhost-warning"
+            class="network-warning"
+            hidden
+        >
+            <strong>Phone scan needs your LAN address.</strong>
+            Open this display using this computer's local network IP
+            before scanning from another device.
+        </div>
+
+        <div class="ticket-meta">
+            <div>
+                <span>TICKET</span>
+                <strong id="ticket-reference">—</strong>
+            </div>
+
+            <div>
+                <span>RESERVATION HOLD</span>
+                <strong>5 minutes</strong>
+            </div>
+
+            <div>
+                <span>SCREEN RESETS IN</span>
+                <strong id="ticket-screen-timer">30s</strong>
+            </div>
+        </div>
+
+        <div class="dialog-actions ticket-actions">
+            <button
+                id="ticket-done"
+                class="primary-action"
+                type="button"
+            >
+                Done
+            </button>
+        </div>
+
+        <p class="ticket-footnote">
+            The space remains reserved after this screen resets.
+        </p>
+    </section>
+</div>
+
+<div
+    id="display-toast"
+    class="display-toast"
+    role="status"
+    aria-live="polite"
+    hidden
+></div>
+</body>
+</html>

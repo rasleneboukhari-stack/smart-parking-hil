@@ -1,0 +1,17 @@
+{
+  "name": "Parking HIL",
+  "author": "Raslene",
+  "pins": [
+    "VCC",
+    "GND",
+    "S0",
+    "S1",
+    "S2",
+    "S3",
+    "TRIG",
+    "ECHO",
+    "CTRL_CS",
+    "CTRL_CLK",
+    "CTRL_DATA"
+  ]
+}

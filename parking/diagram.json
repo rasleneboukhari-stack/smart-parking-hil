@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "author": "Raslene",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-s3-devkitc-1",
+      "id": "esp",
+      "top": -0.18,
+      "left": 33.37,
+      "attrs": {}
+    },
+    {
+      "type": "chip-parking-hil",
+      "id": "hil",
+      "top": -38.4,
+      "left": 153.6,
+      "attrs": {
+        "distance1": "200",
+        "distance2": "200",
+        "distance3": "200",
+        "distance4": "200",
+        "distance5": "200",
+        "distance6": "200",
+        "distance7": "200",
+        "distance8": "200",
+        "distance9": "200",
+        "distance10": "200",
+        "distance11": "200",
+        "distance12": "200",
+        "distance13": "200",
+        "distance14": "200",
+        "distance15": "200",
+        "distance16": "200"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "esp:TX",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "$serialMonitor:TX",
+      "esp:RX",
+      "",
+      []
+    ],
+    [
+      "esp:2",
+      "hil:TRIG",
+      "green",
+      []
+    ],
+    [
+      "esp:3",
+      "hil:ECHO",
+      "blue",
+      []
+    ],
+    [
+      "esp:4",
+      "hil:S0",
+      "orange",
+      []
+    ],
+    [
+      "esp:5",
+      "hil:S1",
+      "orange",
+      []
+    ],
+    [
+      "esp:6",
+      "hil:S2",
+      "orange",
+      []
+    ],
+    [
+      "esp:7",
+      "hil:S3",
+      "orange",
+      []
+    ],
+    [
+      "esp:8",
+      "hil:CTRL_CS",
+      "purple",
+      []
+    ],
+    [
+      "esp:9",
+      "hil:CTRL_CLK",
+      "cyan",
+      []
+    ],
+    [
+      "esp:10",
+      "hil:CTRL_DATA",
+      "yellow",
+      []
+    ],
+    [
+      "esp:3V3.1",
+      "hil:VCC",
+      "red",
+      []
+    ],
+    [
+      "esp:GND.1",
+      "hil:GND",
+      "black",
+      []
+    ]
+  ],
+  "serialMonitor": {
+    "display": "terminal",
+    "convertEol": true
+  },
+  "dependencies": {}
+}

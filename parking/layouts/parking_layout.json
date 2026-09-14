@@ -1,0 +1,449 @@
+{
+  "layout_id": "parkside-16-v1",
+  "name": "Parkside 16 Spot Garage",
+  "version": 3,
+  "units": "meters",
+  "coordinate_reference": "center",
+
+  "metadata": {
+    "description": "Single-floor 16-space parking garage",
+    "total_floors": 1,
+    "total_spots": 16,
+    "design_capacity": 16,
+    "vehicle_flow": "single central aisle"
+  },
+
+  "floors": [
+    {
+      "id": "ground",
+      "name": "Ground",
+      "level": 0,
+      "width": 36.0,
+      "height": 30.0,
+      "zones": [
+        {
+          "id": "A",
+          "name": "Zone A",
+          "x_min": 3.0,
+          "x_max": 33.0
+        }
+      ]
+    }
+  ],
+
+  "spots": [
+    {
+      "id": "spot-1",
+      "label": "P01",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R1",
+      "x": 5.0,
+      "y": 6.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 0,
+      "road_connection": "ground-n-5_0-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-2",
+      "label": "P02",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R1",
+      "x": 8.7,
+      "y": 6.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 0,
+      "road_connection": "ground-n-8_7-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-3",
+      "label": "P03",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R1",
+      "x": 12.4,
+      "y": 6.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 0,
+      "road_connection": "ground-n-12_4-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-4",
+      "label": "P04",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R1",
+      "x": 16.1,
+      "y": 6.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 0,
+      "road_connection": "ground-n-16_1-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-5",
+      "label": "P05",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R1",
+      "x": 19.8,
+      "y": 6.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 0,
+      "road_connection": "ground-n-19_8-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-6",
+      "label": "P06",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R1",
+      "x": 23.5,
+      "y": 6.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 0,
+      "road_connection": "ground-n-23_5-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-7",
+      "label": "P07",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R1",
+      "x": 27.2,
+      "y": 6.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 0,
+      "road_connection": "ground-n-27_2-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-8",
+      "label": "P08",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R1",
+      "x": 30.9,
+      "y": 6.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 0,
+      "road_connection": "ground-n-30_9-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+
+    {
+      "id": "spot-9",
+      "label": "P09",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R2",
+      "x": 5.0,
+      "y": 22.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 180,
+      "road_connection": "ground-n-5_0-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-10",
+      "label": "P10",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R2",
+      "x": 8.7,
+      "y": 22.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 180,
+      "road_connection": "ground-n-8_7-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-11",
+      "label": "P11",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R2",
+      "x": 12.4,
+      "y": 22.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 180,
+      "road_connection": "ground-n-12_4-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-12",
+      "label": "P12",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R2",
+      "x": 16.1,
+      "y": 22.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 180,
+      "road_connection": "ground-n-16_1-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-13",
+      "label": "P13",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R2",
+      "x": 19.8,
+      "y": 22.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 180,
+      "road_connection": "ground-n-19_8-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-14",
+      "label": "P14",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R2",
+      "x": 23.5,
+      "y": 22.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 180,
+      "road_connection": "ground-n-23_5-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-15",
+      "label": "P15",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R2",
+      "x": 27.2,
+      "y": 22.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 180,
+      "road_connection": "ground-n-27_2-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    },
+    {
+      "id": "spot-16",
+      "label": "P16",
+      "floor": "ground",
+      "zone": "A",
+      "row": "R2",
+      "x": 30.9,
+      "y": 22.0,
+      "width": 2.7,
+      "length": 5.2,
+      "rotation": 180,
+      "road_connection": "ground-n-30_9-14_0",
+      "type": "standard",
+      "accessible": false,
+      "ev_charging": false
+    }
+  ],
+
+  "roads": [
+    {
+      "id": "ground-central-aisle",
+      "floor": "ground",
+      "name": "Central Aisle",
+      "type": "one_way_aisle",
+      "width": 6.2,
+      "direction": "forward",
+      "points": [
+        [2.0, 14.0],
+        [34.0, 14.0]
+      ]
+    }
+  ],
+
+  "navigation": {
+    "nodes": [
+      {
+        "id": "ground-n-2_0-14_0",
+        "floor": "ground",
+        "x": 2.0,
+        "y": 14.0
+      },
+      {
+        "id": "ground-n-5_0-14_0",
+        "floor": "ground",
+        "x": 5.0,
+        "y": 14.0
+      },
+      {
+        "id": "ground-n-8_7-14_0",
+        "floor": "ground",
+        "x": 8.7,
+        "y": 14.0
+      },
+      {
+        "id": "ground-n-12_4-14_0",
+        "floor": "ground",
+        "x": 12.4,
+        "y": 14.0
+      },
+      {
+        "id": "ground-n-16_1-14_0",
+        "floor": "ground",
+        "x": 16.1,
+        "y": 14.0
+      },
+      {
+        "id": "ground-n-19_8-14_0",
+        "floor": "ground",
+        "x": 19.8,
+        "y": 14.0
+      },
+      {
+        "id": "ground-n-23_5-14_0",
+        "floor": "ground",
+        "x": 23.5,
+        "y": 14.0
+      },
+      {
+        "id": "ground-n-27_2-14_0",
+        "floor": "ground",
+        "x": 27.2,
+        "y": 14.0
+      },
+      {
+        "id": "ground-n-30_9-14_0",
+        "floor": "ground",
+        "x": 30.9,
+        "y": 14.0
+      },
+      {
+        "id": "ground-n-34_0-14_0",
+        "floor": "ground",
+        "x": 34.0,
+        "y": 14.0
+      }
+    ],
+
+    "edges": [
+      {
+        "from": "ground-n-2_0-14_0",
+        "to": "ground-n-5_0-14_0",
+        "direction": "both"
+      },
+      {
+        "from": "ground-n-5_0-14_0",
+        "to": "ground-n-8_7-14_0",
+        "direction": "both"
+      },
+      {
+        "from": "ground-n-8_7-14_0",
+        "to": "ground-n-12_4-14_0",
+        "direction": "both"
+      },
+      {
+        "from": "ground-n-12_4-14_0",
+        "to": "ground-n-16_1-14_0",
+        "direction": "both"
+      },
+      {
+        "from": "ground-n-16_1-14_0",
+        "to": "ground-n-19_8-14_0",
+        "direction": "both"
+      },
+      {
+        "from": "ground-n-19_8-14_0",
+        "to": "ground-n-23_5-14_0",
+        "direction": "both"
+      },
+      {
+        "from": "ground-n-23_5-14_0",
+        "to": "ground-n-27_2-14_0",
+        "direction": "both"
+      },
+      {
+        "from": "ground-n-27_2-14_0",
+        "to": "ground-n-30_9-14_0",
+        "direction": "both"
+      },
+      {
+        "from": "ground-n-30_9-14_0",
+        "to": "ground-n-34_0-14_0",
+        "direction": "both"
+      }
+    ]
+  },
+
+  "entrances": [
+    {
+      "id": "main-vehicle-entrance",
+      "name": "Main Entrance",
+      "floor": "ground",
+      "x": 2.0,
+      "y": 14.0,
+      "navigation_node": "ground-n-2_0-14_0",
+      "lanes": 1
+    }
+  ],
+
+  "exits": [
+    {
+      "id": "main-vehicle-exit",
+      "name": "Main Exit",
+      "floor": "ground",
+      "x": 34.0,
+      "y": 14.0,
+      "navigation_node": "ground-n-34_0-14_0",
+      "lanes": 1
+    }
+  ],
+
+  "connectors": [],
+
+  "pedestrian_paths": []
+}

@@ -1,0 +1,1384 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap");
+
+:root {
+    --bg: #161a1b;
+    --panel: #252b2e;
+    --panel-2: #30373a;
+    --line: #566064;
+    --text: #f1ecd1;
+    --muted: #a3aca6;
+    --accent: #e2c85d;
+    --green: #6fbb63;
+    --red: #c95c50;
+    --blue: #5d8fbe;
+    --asphalt: #41494c;
+    --asphalt-2: #353c3f;
+    --paint: #e6e0be;
+    --grass-a: #548147;
+    --grass-b: #5a894d;
+    --dark: #101415;
+}
+
+* { box-sizing: border-box; }
+html, body { min-width: 100%; min-height: 100%; margin: 0; }
+body {
+    background:
+        radial-gradient(circle at 20% 0%, rgba(255,255,255,.035), transparent 34%),
+        #15191a;
+    color: var(--text);
+    font-family: "VT323", monospace;
+    image-rendering: pixelated;
+}
+button, select { font: inherit; }
+button { cursor: pointer; }
+[hidden] { display: none !important; }
+button:focus-visible, select:focus-visible, .sim-viewport:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.game-shell {
+    width: min(1760px, calc(100% - 18px));
+    margin: 0 auto;
+    padding: 9px 0 14px;
+}
+
+.pixel-kicker {
+    display: block;
+    color: #9aa39d;
+    font-family: "Press Start 2P", monospace;
+    font-size: 6px;
+    line-height: 1.55;
+    letter-spacing: .5px;
+}
+
+.game-topbar {
+    min-height: 64px;
+    padding: 9px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    border: 3px solid var(--dark);
+    box-shadow: 0 0 0 2px #5e686c, 5px 5px 0 #0a0d0e;
+    background: #282e31;
+}
+.game-title-block h1 {
+    margin: 4px 0 0;
+    font-family: "Press Start 2P", monospace;
+    font-size: clamp(15px, 1.8vw, 22px);
+    line-height: 1.35;
+    color: #f0e9c9;
+    text-shadow: 2px 2px 0 #111516;
+}
+.game-status-cluster {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+.pixel-status, .floor-picker {
+    min-height: 32px;
+    padding: 4px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 2px solid #111516;
+    box-shadow: inset 0 0 0 1px #566064;
+    background: #343c3f;
+}
+.pixel-status { font-size: 14px; }
+.pixel-status i {
+    width: 8px; height: 8px;
+    border: 2px solid #131718;
+    background: #878e8a;
+}
+.pixel-status[data-state="live"] i { background: #6ed08c; }
+.pixel-status[data-state="error"] i { background: #df6f66; }
+.floor-picker > span {
+    color: #aab1ac;
+    font-family: "Press Start 2P", monospace;
+    font-size: 5px;
+}
+.floor-picker select {
+    min-height: 23px;
+    border: 1px solid #141819;
+    background: #ded9b9;
+    color: #1e2622;
+    font-size: 14px;
+}
+
+.game-layout {
+    margin-top: 9px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 318px;
+    gap: 11px;
+    align-items: start;
+}
+.world-column { min-width: 0; }
+.world-frame {
+    overflow: hidden;
+    border: 3px solid var(--dark);
+    box-shadow: 0 0 0 2px #5d676b, 6px 6px 0 #0a0d0e;
+    background: #282f32;
+}
+.world-toolbar {
+    min-height: 48px;
+    padding: 7px 9px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 3px solid #111516;
+    background: #2d3437;
+}
+.world-toolbar strong {
+    display: block;
+    margin-top: 3px;
+    color: #ece5c8;
+    font-family: "Press Start 2P", monospace;
+    font-size: 8px;
+}
+.world-actions { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+.pixel-button {
+    min-height: 36px;
+    padding: 0 10px;
+    border: 3px solid #101415;
+    box-shadow: inset 0 0 0 2px #c3bea1, 3px 3px 0 #0c0f10;
+    background: #dcd6b6;
+    color: #222824;
+    font-family: "Press Start 2P", monospace;
+    font-size: 6px;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+.pixel-button.small { min-height: 30px; padding-inline: 8px; font-size: 5px; }
+.pixel-button.square { width: 36px; min-width: 36px; padding: 0; font-size: 13px; }
+.pixel-button.wide { width: 100%; }
+.pixel-button:active { transform: translate(2px, 2px); box-shadow: inset 0 0 0 2px #c3bea1, 1px 1px 0 #0c0f10; }
+
+.sim-viewport {
+    position: relative;
+    height: min(750px, calc(100vh - 145px));
+    min-height: 610px;
+    overflow: hidden;
+    background: #334239;
+    outline: none;
+    touch-action: none;
+}
+#sim-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    image-rendering: pixelated;
+    cursor: default;
+}
+
+.map-hud {
+    position: absolute;
+    z-index: 30;
+    min-width: 128px;
+    padding: 7px 8px;
+    border: 3px solid #111516;
+    box-shadow: inset 0 0 0 1px #5b6466, 3px 3px 0 rgba(0,0,0,.35);
+    background: rgba(37,44,47,.93);
+    pointer-events: none;
+}
+.map-hud.top-left { left: 9px; top: 9px; }
+.map-hud.top-right { right: 9px; top: 9px; text-align: right; }
+.map-hud span, .map-hud small {
+    display: block;
+    color: #9ba49e;
+    font-family: "Press Start 2P", monospace;
+    font-size: 5px;
+    line-height: 1.45;
+}
+.map-hud strong {
+    display: block;
+    margin: 3px 0;
+    color: #f0e9c9;
+    font-family: "Press Start 2P", monospace;
+    font-size: 8px;
+}
+
+.game-message {
+    position: absolute;
+    left: 50%; bottom: 10px;
+    z-index: 45;
+    transform: translateX(-50%);
+    max-width: min(620px, calc(100% - 22px));
+    padding: 8px 11px;
+    border: 3px solid #111516;
+    box-shadow: inset 0 0 0 2px #747d76, 4px 4px 0 rgba(0,0,0,.45);
+    background: rgba(30,37,39,.96);
+    color: #eee8ca;
+    font-size: 16px;
+    line-height: 1.2;
+    text-align: center;
+    pointer-events: none;
+}
+
+/* The actual display page is shown here, not restyled into the game aesthetic. */
+.gate-display-overlay {
+    position: absolute;
+    inset: 12px;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    background: rgba(12,16,17,.58);
+}
+.gate-display-chassis {
+    width: min(1020px, 96%);
+    padding: 8px;
+    border: 4px solid #111516;
+    box-shadow: 0 0 0 3px #7c8175, 8px 8px 0 rgba(0,0,0,.45);
+    background: #454c49;
+}
+.embedded-screen-header {
+    min-height: 39px;
+    padding: 5px 7px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    border: 2px solid #111516;
+    background: #282f2e;
+}
+.embedded-screen-header strong {
+    display: block;
+    margin-top: 2px;
+    color: #dcd6b9;
+    font-family: "Press Start 2P", monospace;
+    font-size: 6px;
+}
+.gate-display-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1540 / 900;
+    margin-top: 7px;
+    overflow: hidden;
+    border: 3px solid #0f1314;
+    background: #f2f3ef;
+}
+#gate-display-frame {
+    position: absolute;
+    left: 0; top: 0;
+    width: 1540px;
+    height: 900px;
+    border: 0;
+    transform-origin: 0 0;
+    background: #f2f3ef;
+}
+
+.distance-hud {
+    position: absolute;
+    left: 9px; bottom: 48px;
+    z-index: 40;
+    width: 240px;
+    padding: 7px;
+    border: 3px solid #111516;
+    box-shadow: inset 0 0 0 1px #596367, 4px 4px 0 rgba(0,0,0,.35);
+    background: rgba(39,46,49,.95);
+}
+.distance-hud header {
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.distance-hud header span, .distance-hud header strong {
+    font-family: "Press Start 2P", monospace;
+    font-size: 5px;
+    color: #ddd7bb;
+}
+.distance-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 3px; }
+.distance-cell {
+    min-height: 31px;
+    padding: 3px;
+    display: grid;
+    align-content: center;
+    border: 1px solid #5a6468;
+    background: #202628;
+    text-align: center;
+}
+.distance-cell span { color: #98a29d; font-size: 10px; }
+.distance-cell strong { color: #dfe5dc; font-size: 12px; }
+.distance-cell[data-near="true"] { border-color: var(--accent); background: #443f2a; }
+
+.game-controls {
+    margin-top: 9px;
+    display: grid;
+    grid-template-columns: 1.25fr 1fr .9fr;
+    gap: 9px;
+}
+.game-controls > div {
+    min-width: 0;
+    padding: 10px;
+    border: 3px solid #111516;
+    box-shadow: 0 0 0 2px #596267, 4px 4px 0 #0c0f10;
+    background: #282f32;
+}
+.panel-title-row, .selected-car-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.panel-title-row strong, .selected-car-heading strong {
+    display: block;
+    margin-top: 4px;
+    color: #eee7c8;
+    font-family: "Press Start 2P", monospace;
+    font-size: 7px;
+    line-height: 1.45;
+}
+.car-list {
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 5px;
+}
+.car-option {
+    min-height: 54px;
+    padding: 6px;
+    display: grid;
+    grid-template-columns: 28px minmax(0,1fr);
+    align-items: center;
+    gap: 7px;
+    border: 3px solid #101415;
+    background: #394145;
+    color: #e9e3c8;
+    text-align: left;
+}
+.car-option[aria-pressed="true"] { border-color: #d8c45a; background: #4a4732; }
+.car-option > span:last-child { display:none; }
+.car-swatch {
+    position: relative;
+    width: 27px; height: 17px;
+    border: 2px solid #111516;
+    background: #758fac;
+}
+.car-swatch::before {
+    content:"";
+    position:absolute;
+    left:5px; right:5px; top:4px;
+    height:5px;
+    background:#b8cad0;
+}
+.car-option strong { display:block; font-family:"Press Start 2P",monospace; font-size:5px; line-height:1.45; }
+.car-option small { display:block; margin-top:2px; color:#aab2ad; font-size:11px; }
+#selected-car-state {
+    padding: 4px 6px;
+    border: 2px solid #111516;
+    background: #3d4647;
+    color: #a1d88e;
+    font-family:"Press Start 2P",monospace;
+    font-size:5px;
+}
+.car-stats { margin: 8px 0; display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+.car-stats > div { padding:7px; border:2px solid #111516; background:#343c3f; }
+.car-stats span, .reservation-summary span { display:block; color:#9ba49e; font-family:"Press Start 2P",monospace; font-size:5px; }
+.car-stats strong { display:block; margin-top:3px; color:#eee8ca; font-size:15px; }
+.reservation-summary { margin-bottom:7px; padding:7px; border:2px solid #111516; background:#554d2b; }
+.reservation-summary strong { display:block; margin-top:4px; color:#ffefa0; font-family:"Press Start 2P",monospace; font-size:8px; }
+.keyboard-panel { display:grid; align-content:start; gap:5px; }
+.key-row { display:grid; grid-template-columns: 45px 30px 1fr; align-items:center; gap:4px; color:#d8ddd5; font-size:14px; }
+kbd {
+    min-width: 27px; min-height:24px; padding:0 5px;
+    display:grid; place-items:center;
+    border:2px solid #111516;
+    box-shadow: inset 0 -3px 0 #9d9881;
+    background:#d8d2b4;
+    color:#202522;
+    font-family:"Press Start 2P",monospace;
+    font-size:5px;
+}
+
+.phone-panel { position: sticky; top: 9px; min-width:0; }
+.phone-label { margin-bottom:6px; padding-left:3px; }
+.phone-label strong {
+    display:block; margin-top:3px;
+    color:#e8e2c7;
+    font-family:"Press Start 2P",monospace;
+    font-size:7px; line-height:1.45;
+}
+.phone-device {
+    width:100%;
+    padding:10px 8px 13px;
+    border:5px solid #0c0f10;
+    border-radius:30px;
+    box-shadow: inset 0 0 0 2px #555c5f, 7px 7px 0 rgba(0,0,0,.38);
+    background:#272b2d;
+}
+.phone-speaker { width:62px; height:5px; margin:0 auto 7px; border-radius:10px; background:#101314; }
+.phone-stage {
+    position:relative;
+    height: 630px;
+    overflow:hidden;
+    border:3px solid #0d1011;
+    border-radius:17px;
+    background:#f1f2ed;
+}
+.phone-empty {
+    position:absolute; inset:0;
+    padding:24px;
+    display:grid; place-content:center; justify-items:center;
+    color:#25302c; text-align:center;
+    background:#f1f2ed;
+}
+.phone-empty-icon {
+    width:58px; height:58px;
+    display:grid; place-items:center;
+    border:4px solid #1d2824;
+    border-radius:11px;
+    background:#dce8c8;
+    color:#1f2b26;
+    font-family:"Press Start 2P",monospace;
+    font-size:18px;
+}
+.phone-empty strong { margin-top:14px; font-family:"Press Start 2P",monospace; font-size:7px; line-height:1.5; }
+.phone-empty p { max-width:210px; margin:8px 0 0; color:#68716c; font-size:15px; }
+#phone-frame {
+    position:absolute;
+    left:0; top:0;
+    width:390px;
+    height:844px;
+    border:0;
+    transform-origin:0 0;
+    background:white;
+}
+.phone-home-indicator { width:82px; height:5px; margin:9px auto 0; border-radius:99px; background:#0d1011; }
+.phone-help {
+    margin-top:8px; padding:7px 8px;
+    border:2px solid #111516;
+    background:#2c3336;
+    color:#a8b0ab;
+    font-size:13px; line-height:1.25;
+}
+
+@media (max-width:1180px) {
+    .game-layout { grid-template-columns:1fr; }
+    .phone-panel { position:static; max-width:360px; margin:0 auto; width:100%; }
+}
+@media (max-width:840px) {
+    .game-topbar { align-items:flex-start; flex-direction:column; }
+    .game-status-cluster { justify-content:flex-start; }
+    .game-controls { grid-template-columns:1fr; }
+    .sim-viewport { min-height:560px; height:640px; }
+    .car-list { grid-template-columns:1fr; }
+}
+@media (max-width:600px) {
+    .game-shell { width:calc(100% - 10px); }
+    .sim-viewport { min-height:500px; height:570px; }
+    .map-hud.top-right { top:76px; }
+    .gate-display-overlay { inset:5px; }
+    .gate-display-chassis { width:100%; padding:5px; }
+    .distance-hud { width:190px; }
+    .distance-grid { grid-template-columns:repeat(2,1fr); }
+}
+
+
+/* ============================================================
+   V5 GATE / PARK ASSIST
+============================================================ */
+
+.park-button {
+    margin-bottom: 6px;
+    background: #98b96f;
+    box-shadow: inset 0 0 0 2px #d7dfad, 3px 3px 0 #0c0f10;
+}
+
+.park-button:disabled {
+    opacity: .38;
+    cursor: default;
+    filter: grayscale(.5);
+}
+
+.gate-display-chassis {
+    width: min(900px, 88%);
+}
+
+.gate-display-overlay {
+    padding: 12px;
+}
+
+.gate-display-stage {
+    max-height: calc(100% - 48px);
+}
+
+/* Physical perimeter is now enforced in JS. The gate is the only entry. */
+
+
+/* ============================================================
+   V6 START / FULLSCREEN / MANUAL GATE PROMPT
+============================================================ */
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.start-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: grid;
+    place-items: center;
+
+    padding: 24px;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,.018) 0 2px,
+            transparent 2px 6px
+        ),
+        #131718;
+}
+
+.start-card {
+    width: min(560px, 100%);
+    padding: 28px;
+
+    border: 4px solid #101415;
+    box-shadow:
+        0 0 0 3px #667073,
+        10px 10px 0 #080a0b;
+
+    background: #293033;
+    text-align: center;
+}
+
+.start-card h1 {
+    margin: 12px 0 14px;
+
+    color: #f0e8c7;
+
+    font-family: "Press Start 2P", monospace;
+    font-size: clamp(18px, 4vw, 30px);
+    line-height: 1.45;
+
+    text-shadow: 3px 3px 0 #111516;
+}
+
+.start-card p {
+    max-width: 430px;
+    margin: 0 auto 18px;
+
+    color: #c1c8c2;
+    font-size: 20px;
+    line-height: 1.25;
+}
+
+.start-card small {
+    display: block;
+    margin-top: 16px;
+
+    color: #8f9993;
+    font-size: 14px;
+}
+
+.start-music-option {
+    width: fit-content;
+    margin: 0 auto 18px;
+    padding: 10px 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    border: 3px solid #111516;
+    background: #343c3f;
+
+    color: #ede6c8;
+
+    font-family: "Press Start 2P", monospace;
+    font-size: 7px;
+}
+
+.start-music-option input {
+    width: 18px;
+    height: 18px;
+    accent-color: #d7c65e;
+}
+
+.start-button {
+    min-width: 260px;
+    min-height: 56px;
+    font-size: 9px;
+}
+
+.gate-prompt {
+    position: absolute;
+    left: 50%;
+    top: 58%;
+    z-index: 85;
+
+    transform: translate(-50%, -50%);
+
+    min-width: min(360px, calc(100% - 30px));
+    padding: 12px 18px;
+
+    border: 4px solid #111516;
+    box-shadow:
+        inset 0 0 0 2px #6f786f,
+        6px 6px 0 rgba(0,0,0,.45);
+
+    background: #263032;
+    color: #f0e9c9;
+
+    text-align: center;
+
+    pointer-events: none;
+
+    animation: gatePromptBob .75s steps(2, end) infinite;
+}
+
+.gate-prompt span,
+.gate-prompt small {
+    display: block;
+
+    color: #aab4ad;
+
+    font-family: "Press Start 2P", monospace;
+    font-size: 6px;
+    line-height: 1.5;
+}
+
+.gate-prompt strong {
+    display: block;
+    margin: 7px 0 5px;
+
+    color: #f2d864;
+
+    font-family: "Press Start 2P", monospace;
+    font-size: 16px;
+
+    text-shadow: 2px 2px 0 #111516;
+}
+
+@keyframes gatePromptBob {
+    0%, 100% {
+        transform: translate(-50%, -50%);
+    }
+
+    50% {
+        transform: translate(-50%, calc(-50% - 5px));
+    }
+}
+
+
+/* ============================================================
+   NO-SCROLL GAME MODE
+============================================================ */
+
+body.sim-running .game-shell {
+    width: 100%;
+    height: 100vh;
+
+    padding: 6px;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+body.sim-running .game-topbar {
+    flex: 0 0 58px;
+    min-height: 58px;
+}
+
+body.sim-running .game-layout {
+    flex: 1 1 auto;
+    min-height: 0;
+
+    margin-top: 6px;
+
+    align-items: stretch;
+}
+
+body.sim-running .world-column {
+    min-height: 0;
+
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) 166px;
+    gap: 6px;
+}
+
+body.sim-running .world-frame {
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+body.sim-running .world-toolbar {
+    flex: 0 0 45px;
+    min-height: 45px;
+}
+
+body.sim-running .sim-viewport {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+}
+
+body.sim-running .game-controls {
+    min-height: 0;
+    margin-top: 0;
+}
+
+body.sim-running .game-controls > div {
+    overflow: hidden;
+}
+
+body.sim-running .phone-panel {
+    position: static;
+
+    min-height: 0;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
+
+body.sim-running .phone-label {
+    flex: 0 0 auto;
+}
+
+body.sim-running .phone-device {
+    flex: 1 1 auto;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+body.sim-running .phone-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+}
+
+body.sim-running .phone-help {
+    flex: 0 0 auto;
+    margin-top: 5px;
+}
+
+body.sim-running .phone-home-indicator {
+    flex: 0 0 auto;
+}
+
+@media (max-height: 760px) {
+    body.sim-running .game-topbar {
+        flex-basis: 50px;
+        min-height: 50px;
+    }
+
+    body.sim-running .world-column {
+        grid-template-rows: minmax(0, 1fr) 145px;
+    }
+
+    body.sim-running .game-controls > div {
+        padding: 7px;
+    }
+
+    body.sim-running .car-option {
+        min-height: 46px;
+    }
+
+    body.sim-running .phone-help {
+        display: none;
+    }
+}
+
+
+/* ============================================================
+   V7 — REAL GAME MENU + RE-ENTER FULLSCREEN + ZERO SCROLL
+============================================================ */
+
+/*
+  The game exists behind the start overlay so the menu feels like
+  an actual title/menu screen instead of a separate blank page.
+*/
+.start-screen {
+    background:
+        linear-gradient(rgba(7, 10, 11, .72), rgba(7, 10, 11, .84)),
+        repeating-linear-gradient(
+            90deg,
+            rgba(86, 125, 72, .20) 0 24px,
+            rgba(77, 115, 65, .20) 24px 48px
+        );
+
+    backdrop-filter: blur(2px);
+}
+
+.start-card {
+    width: min(620px, calc(100% - 30px));
+    padding: 38px 42px 30px;
+
+    border: 5px solid #0c1010;
+
+    box-shadow:
+        0 0 0 4px #777d70,
+        0 0 0 8px #232a29,
+        14px 14px 0 rgba(0,0,0,.62);
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,.025) 0 2px,
+            transparent 2px 6px
+        ),
+        #293133;
+}
+
+.start-logo-mark {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 16px;
+
+    display: grid;
+    place-items: center;
+
+    border: 5px solid #111616;
+    box-shadow:
+        inset 0 0 0 4px #d7d0a7,
+        5px 5px 0 #0d1011;
+
+    background: #506c4a;
+    color: #f1ebc9;
+
+    font-family: "Press Start 2P", monospace;
+    font-size: 30px;
+}
+
+.start-card h1 {
+    margin: 9px 0 14px;
+
+    font-size: clamp(22px, 4.2vw, 36px);
+    line-height: 1.48;
+}
+
+.start-subtitle {
+    max-width: 470px !important;
+    margin-bottom: 22px !important;
+
+    color: #bdc5be !important;
+    font-size: 19px !important;
+}
+
+.start-menu {
+    width: min(390px, 100%);
+    margin: 0 auto;
+
+    display: grid;
+    gap: 10px;
+}
+
+.menu-row-button {
+    min-height: 46px;
+    padding: 0 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    border: 3px solid #0f1414;
+    box-shadow:
+        inset 0 0 0 2px #626c69,
+        3px 3px 0 #0b0e0f;
+
+    background: #353e40;
+    color: #e9e3c6;
+
+    font-family: "Press Start 2P", monospace;
+    font-size: 7px;
+}
+
+.menu-row-button strong {
+    color: #f0d566;
+}
+
+.menu-row-button[aria-pressed="false"] strong {
+    color: #c4776c;
+}
+
+.start-button {
+    width: 100%;
+    min-height: 62px;
+
+    background: #ddd5ad;
+
+    font-size: 10px;
+}
+
+.keep-music-option {
+    min-height: 42px;
+    padding: 8px 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    border: 3px solid #111616;
+    background: #22292b;
+    color: #b8c0ba;
+
+    font-family: "Press Start 2P", monospace;
+    font-size: 6px;
+    line-height: 1.5;
+}
+
+.keep-music-option input {
+    width: 18px;
+    height: 18px;
+
+    accent-color: #d6c75e;
+}
+
+.start-tips {
+    margin-top: 22px;
+
+    display: flex;
+    justify-content: center;
+    gap: 10px 20px;
+    flex-wrap: wrap;
+
+    color: #9ca69f;
+
+    font-family: "Press Start 2P", monospace;
+    font-size: 5px;
+    line-height: 1.7;
+}
+
+
+/* Always no document scrolling once the game starts — even after Esc. */
+body.sim-running {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body.sim-running .game-shell {
+    position: fixed;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+    padding: 5px;
+
+    overflow: hidden;
+}
+
+
+/*
+  The active game must fit inside one screen.
+  Only controls required for the simulation remain prominent.
+*/
+body.sim-running .game-layout {
+    min-height: 0;
+    height: auto;
+}
+
+body.sim-running .world-column {
+    min-height: 0;
+
+    grid-template-rows:
+        minmax(0, 1fr)
+        134px;
+}
+
+body.sim-running .game-controls {
+    height: 134px;
+
+    grid-template-columns:
+        minmax(0, 1.2fr)
+        minmax(0, 1fr)
+        minmax(0, .72fr);
+}
+
+body.sim-running .game-controls > div {
+    min-height: 0;
+    padding: 8px;
+}
+
+body.sim-running .car-list {
+    margin-top: 6px;
+}
+
+body.sim-running .car-option {
+    min-height: 45px;
+    padding: 5px;
+}
+
+body.sim-running .car-stats {
+    margin: 5px 0;
+}
+
+body.sim-running .car-stats > div {
+    padding: 5px 7px;
+}
+
+body.sim-running .pixel-button.wide {
+    min-height: 31px;
+}
+
+body.sim-running .phone-help {
+    display: none;
+}
+
+
+/* In actual browser fullscreen, remove tutorial/help UI and give space back to the world. */
+body.sim-fullscreen .keyboard-panel {
+    display: none !important;
+}
+
+body.sim-fullscreen .game-controls {
+    grid-template-columns:
+        minmax(0, 1.25fr)
+        minmax(0, 1fr);
+}
+
+body.sim-fullscreen .world-column {
+    grid-template-rows:
+        minmax(0, 1fr)
+        122px;
+}
+
+body.sim-fullscreen .game-controls {
+    height: 122px;
+}
+
+
+/*
+  Keep FULLSCREEN available after Esc.
+  This button always remains visible in the world toolbar.
+*/
+#fullscreen-toggle {
+    min-width: 82px;
+}
+
+
+/* At shorter desktop heights, keep ALL real game controls without scrolling. */
+@media (max-height: 820px) {
+    body.sim-running .game-topbar {
+        flex-basis: 48px;
+        min-height: 48px;
+    }
+
+    body.sim-running .game-title-block h1 {
+        font-size: 15px;
+    }
+
+    body.sim-running .world-toolbar {
+        flex-basis: 38px;
+        min-height: 38px;
+        padding-block: 4px;
+    }
+
+    body.sim-running .world-column {
+        grid-template-rows:
+            minmax(0, 1fr)
+            116px;
+    }
+
+    body.sim-running .game-controls {
+        height: 116px;
+    }
+
+    body.sim-running .keyboard-panel {
+        gap: 3px;
+    }
+
+    body.sim-running .key-row {
+        min-height: 17px;
+    }
+
+    body.sim-running .phone-label {
+        margin-bottom: 2px;
+    }
+
+    body.sim-running .phone-speaker {
+        margin-bottom: 4px;
+    }
+
+    body.sim-running .phone-home-indicator {
+        margin-top: 4px;
+    }
+}
+
+@media (max-height: 720px) {
+    body.sim-running .keyboard-panel {
+        display: none !important;
+    }
+
+    body.sim-running .game-controls {
+        grid-template-columns:
+            minmax(0, 1.25fr)
+            minmax(0, 1fr);
+
+        height: 105px;
+    }
+
+    body.sim-running .world-column {
+        grid-template-rows:
+            minmax(0, 1fr)
+            105px;
+    }
+
+    body.sim-running .selected-car-heading,
+    body.sim-running .car-stats {
+        margin-block: 3px;
+    }
+}
+
+
+/* ============================================================
+   V8 — PAUSE MENU + ALWAYS-VISIBLE PARK CAR
+============================================================ */
+
+.pause-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 950;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(7, 10, 11, .72);
+    backdrop-filter: blur(3px);
+}
+.pause-screen[hidden] { display: none !important; }
+.pause-card {
+    width: min(520px, calc(100% - 28px));
+    padding: 28px 30px 24px;
+    border: 5px solid #0d1111;
+    box-shadow: 0 0 0 4px #70786f, 0 0 0 8px #252c2c, 12px 12px 0 rgba(0,0,0,.58);
+    background: repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 2px,transparent 2px 6px),#2a3234;
+    text-align: center;
+}
+.pause-card h2 {
+    margin: 10px 0 22px;
+    color: #f0e8c7;
+    font-family: "Press Start 2P", monospace;
+    font-size: 24px;
+    line-height: 1.45;
+    text-shadow: 3px 3px 0 #111516;
+}
+.pause-menu-actions { display: grid; gap: 9px; }
+.pause-primary { min-height: 54px; width: 100%; font-size: 9px; }
+.pause-menu-actions .menu-row-button { width: 100%; }
+.pause-menu-actions .danger-row strong { color: #e17d6f; }
+.pause-card small { display: block; margin-top: 16px; color: #98a39c; font-size: 13px; }
+.quick-park { min-width: 72px; }
+.quick-park:not(:disabled) { background: #dcd39d; color: #1f2924; }
+body.sim-running .selected-car-panel {
+    display: grid;
+    grid-template-rows: auto auto auto auto auto;
+    align-content: start;
+    gap: 4px;
+}
+body.sim-running .selected-car-panel .car-stats { margin: 2px 0; }
+body.sim-running .selected-car-panel .reservation-summary { margin-bottom: 2px; padding: 5px 7px; }
+body.sim-running #park-car, body.sim-running #reset-car {
+    display: block !important;
+    min-height: 29px;
+    margin: 0;
+}
+body.sim-fullscreen .selected-car-panel .car-stats { display: none; }
+body.sim-fullscreen .selected-car-panel { grid-template-rows: auto auto auto auto; }
+body.sim-fullscreen .reservation-summary { min-height: 28px; }
+@media (max-height: 760px) {
+    body.sim-running .selected-car-panel .car-stats { display: none; }
+    body.sim-running .selected-car-panel { grid-template-rows: auto auto auto auto; }
+}
+
+
+/* ============================================================
+   V9 — FULLSCREEN BOTTOM CLIP FIX
+============================================================ */
+
+/*
+  In browser fullscreen the reset action already exists in the PAUSE menu,
+  so hiding this duplicate frees the exact vertical space that was peeking
+  out underneath PARK CAR.
+*/
+body.sim-fullscreen #reset-car {
+    display: none !important;
+}
+
+body.sim-fullscreen .selected-car-panel {
+    overflow: hidden !important;
+
+    grid-template-rows:
+        auto
+        auto
+        auto
+        minmax(30px, auto) !important;
+}
+
+body.sim-fullscreen #park-car {
+    display: block !important;
+    min-height: 32px !important;
+    max-height: 36px;
+    margin: 0 !important;
+}
+
+/*
+  Prevent any control panel content from painting outside the fixed
+  fullscreen game area.
+*/
+body.sim-fullscreen .game-controls,
+body.sim-fullscreen .game-controls > div {
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
+/*
+  Slightly reduce the fullscreen bottom control strip so the world gains
+  a few pixels and nothing touches the bottom edge.
+*/
+body.sim-fullscreen .world-column {
+    grid-template-rows:
+        minmax(0, 1fr)
+        112px !important;
+}
+
+body.sim-fullscreen .game-controls {
+    height: 112px !important;
+}
+
+
+/* ============================================================
+   V10 — PHONE FULLSCREEN FIX
+============================================================ */
+
+body.sim-running .phone-panel {
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+body.sim-running .phone-device {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+    max-height: calc(100% - 26px) !important;
+    overflow: hidden !important;
+}
+
+body.sim-running .phone-stage {
+    flex: 0 0 auto !important;
+
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 390 / 844;
+
+    min-height: 0 !important;
+    max-height: calc(100vh - 165px) !important;
+
+    overflow: hidden !important;
+}
+
+body.sim-fullscreen .phone-panel {
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+body.sim-fullscreen .phone-device {
+    max-height: 100% !important;
+}
+
+body.sim-fullscreen .phone-stage {
+    max-height: calc(100vh - 120px) !important;
+}
+
+/* Make the embedded real phone page fit exactly into its native viewport. */
+#phone-frame {
+    width: 390px !important;
+    height: 844px !important;
+    transform-origin: 0 0 !important;
+}
+
+/* If the viewport is unusually short, shrink the phone instead of overflowing. */
+@media (max-height: 760px) {
+    body.sim-running .phone-stage,
+    body.sim-fullscreen .phone-stage {
+        max-height: calc(100vh - 105px) !important;
+    }
+}
+
+
+/* ============================================================
+   V11 — MULTI-CAR STRIP + EMBEDDED PHONE FIX
+============================================================ */
+
+/* Keep added cars on one row instead of generating a clipped second row. */
+.car-list,
+body.sim-running .car-list,
+body.sim-fullscreen .car-list {
+    grid-template-columns:
+        repeat(var(--car-count, 3), minmax(0, 1fr)) !important;
+
+    grid-auto-flow: row;
+    overflow: hidden !important;
+}
+
+body.sim-running .car-option,
+body.sim-fullscreen .car-option {
+    min-width: 0 !important;
+    min-height: 42px !important;
+    padding: 4px !important;
+    gap: 4px !important;
+
+    grid-template-columns:
+        minmax(18px, 24px)
+        minmax(0, 1fr) !important;
+}
+
+body.sim-running .car-swatch,
+body.sim-fullscreen .car-swatch {
+    width: 22px !important;
+    height: 14px !important;
+}
+
+body.sim-running .car-option strong,
+body.sim-fullscreen .car-option strong {
+    overflow: hidden;
+
+    font-size: clamp(4px, .38vw, 6px) !important;
+    line-height: 1.35;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.sim-running .car-option small,
+body.sim-fullscreen .car-option small {
+    overflow: hidden;
+
+    font-size: clamp(8px, .72vw, 11px) !important;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Preserve pointer hit-testing on the scaled real phone page. */
+.phone-stage,
+#phone-frame {
+    pointer-events: auto !important;
+}
+
+#phone-frame {
+    touch-action: manipulation;
+}

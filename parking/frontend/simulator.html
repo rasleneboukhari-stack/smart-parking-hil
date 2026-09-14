@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Parkside — Parking Game Simulator</title>
+
+    <link rel="stylesheet" href="/static/simulator.css?v=sim-game-v11">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+    <script src="/static/simulator.js?v=sim-game-v11" defer></script>
+</head>
+<body>
+<div id="start-screen" class="start-screen">
+    <section class="start-card" aria-labelledby="start-title">
+        <div class="start-logo-mark">P</div>
+
+        <span class="pixel-kicker">PARKSIDE TEST WORLD</span>
+        <h1 id="start-title">PARKING<br>SIMULATOR</h1>
+
+        <p class="start-subtitle">
+            Enter the lot, use the real entrance terminal,
+            reserve a bay, and park the car.
+        </p>
+
+        <div class="start-menu">
+            <button
+                id="menu-music-toggle"
+                class="menu-row-button"
+                type="button"
+            >
+                <span>MENU MUSIC</span>
+                <strong>ON</strong>
+            </button>
+
+            <button
+                id="start-simulator"
+                class="pixel-button start-button"
+                type="button"
+            >
+                START GAME
+            </button>
+
+            <label class="keep-music-option">
+                <input id="keep-music" type="checkbox">
+                <span>KEEP MUSIC DURING GAME</span>
+            </label>
+        </div>
+
+        <div class="start-tips">
+            <span>WASD / ARROWS — DRIVE</span>
+            <span>SPACE — BRAKE / USE TERMINAL</span>
+        </div>
+
+        <small>
+            Start requests fullscreen. You can re-enter fullscreen anytime with F or the FULLSCREEN button.
+        </small>
+    </section>
+</div>
+
+<div id="pause-screen" class="pause-screen" hidden>
+    <section class="pause-card" aria-labelledby="pause-title">
+        <span class="pixel-kicker">GAME PAUSED</span>
+        <h2 id="pause-title">PAUSE MENU</h2>
+
+        <div class="pause-menu-actions">
+            <button id="pause-resume" class="pixel-button pause-primary" type="button">RESUME</button>
+            <button id="pause-restart-car" class="menu-row-button" type="button"><span>RESTART SELECTED CAR</span><strong>R</strong></button>
+            <button id="pause-fullscreen" class="menu-row-button" type="button"><span>FULLSCREEN</span><strong>F</strong></button>
+            <button id="pause-music" class="menu-row-button" type="button"><span>MUSIC</span><strong>OFF</strong></button>
+            <button id="pause-restart-game" class="menu-row-button danger-row" type="button"><span>RESTART SIMULATOR</span><strong>↻</strong></button>
+            <button id="pause-main-menu" class="menu-row-button" type="button"><span>MAIN MENU</span><strong>◀</strong></button>
+        </div>
+
+        <small>Press P to resume.</small>
+    </section>
+</div>
+
+<main class="game-shell">
+    <header class="game-topbar">
+        <div class="game-title-block">
+            <span class="pixel-kicker">PARKSIDE TEST WORLD</span>
+            <h1>Parking Simulator</h1>
+        </div>
+
+        <div class="game-status-cluster">
+            <div id="gateway-status" class="pixel-status" data-state="connecting">
+                <i></i><span>Gateway connecting</span>
+            </div>
+
+            <div id="mqtt-status" class="pixel-status" data-state="connecting">
+                <i></i><span>HIL model starting</span>
+            </div>
+
+            <label class="floor-picker">
+                <span>FLOOR</span>
+                <select id="floor-select"></select>
+            </label>
+        </div>
+    </header>
+
+    <section class="game-layout">
+        <section class="world-column">
+            <div class="world-frame">
+                <header class="world-toolbar">
+                    <div>
+                        <span class="pixel-kicker">CURRENT AREA</span>
+                        <strong id="floor-title">Ground</strong>
+                    </div>
+
+                    <div class="world-actions">
+                        <button id="toggle-sensors" type="button" class="pixel-button small">SENSORS</button>
+                        <button id="fit-map" type="button" class="pixel-button small">FOLLOW</button>
+                        <button id="music-toggle" type="button" class="pixel-button small">MUSIC OFF</button>
+                        <button id="fullscreen-toggle" type="button" class="pixel-button small">FULLSCREEN</button>
+                        <button id="park-car-quick" type="button" class="pixel-button small quick-park" disabled>PARK CAR</button>
+                        <button id="pause-sim" type="button" class="pixel-button small">PAUSE</button>
+                    </div>
+                </header>
+
+                <div id="sim-viewport" class="sim-viewport" tabindex="0" aria-label="Top-down parking game">
+                    <canvas id="sim-canvas" aria-label="2D parking simulator"></canvas>
+
+                    <div class="map-hud top-left">
+                        <span>SELECTED</span>
+                        <strong id="hud-car-name">CAR 1</strong>
+                        <small id="hud-car-mode">DRIVING</small>
+                    </div>
+
+                    <div class="map-hud top-right">
+                        <span>CAMERA</span>
+                        <strong id="camera-mode-label">FOLLOW</strong>
+                        <small>WASD / ARROWS</small>
+                    </div>
+
+                    <div id="sim-message" class="game-message">
+                        Drive to the entrance gate. Press SPACE when the terminal prompt appears.
+                    </div>
+
+                    <div id="gate-prompt" class="gate-prompt" hidden>
+                        <span>ENTRANCE TERMINAL</span>
+                        <strong>PRESS SPACE</strong>
+                        <small>TO VIEW PARKING DISPLAY</small>
+                    </div>
+
+                    <!-- The real Parkside entrance display, scaled into a kiosk popup. -->
+                    <section id="gate-display-overlay" class="gate-display-overlay" hidden aria-label="Entrance display">
+                        <div class="gate-display-chassis">
+                            <header class="embedded-screen-header">
+                                <div>
+                                    <span class="pixel-kicker">ENTRANCE KIOSK</span>
+                                    <strong>LIVE TERMINAL</strong>
+                                </div>
+                                <button id="gate-display-dismiss" type="button" class="pixel-button small">CLOSE</button>
+                            </header>
+
+                            <div id="gate-display-stage" class="gate-display-stage">
+                                <iframe
+                                    id="gate-display-frame"
+                                    title="Parkside entrance terminal"
+                                    src="/display?simulator=1&v=sim-gate-v5"
+                                ></iframe>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Distances are debug data only: the MCU still decides occupancy. -->
+                    <section id="distance-hud" class="distance-hud" hidden>
+                        <header>
+                            <span>VIRTUAL HC-SR04</span>
+                            <strong>DISTANCE → HIL</strong>
+                        </header>
+                        <div id="distance-grid" class="distance-grid"></div>
+                    </section>
+                </div>
+            </div>
+
+            <section class="game-controls">
+                <div class="car-select-panel">
+                    <div class="panel-title-row">
+                        <div>
+                            <span class="pixel-kicker">VEHICLES</span>
+                            <strong>Choose your car</strong>
+                        </div>
+                        <button id="add-car" class="pixel-button square" type="button" title="Add another car">+</button>
+                    </div>
+                    <div id="car-list" class="car-list"></div>
+                </div>
+
+                <div class="selected-car-panel">
+                    <span class="pixel-kicker">SELECTED CAR</span>
+                    <div class="selected-car-heading">
+                        <strong id="selected-car-name">Car 1</strong>
+                        <span id="selected-car-state">DRIVING</span>
+                    </div>
+
+                    <div class="car-stats">
+                        <div><span>SPEED</span><strong id="speed-value">0.0 m/s</strong></div>
+                        <div><span>PARKED</span><strong id="parking-value">—</strong></div>
+                    </div>
+
+                    <div id="reservation-summary" class="reservation-summary" hidden>
+                        <span>RESERVED SPACE</span>
+                        <strong id="reserved-spot-label">P01</strong>
+                    </div>
+
+                    <button id="park-car" class="pixel-button wide park-button" type="button" disabled>PARK CAR</button>
+                    <button id="reset-car" class="pixel-button wide" type="button">RETURN TO ENTRANCE</button>
+                </div>
+
+                <div class="keyboard-panel">
+                    <span class="pixel-kicker">DRIVE</span>
+                    <div class="key-row"><kbd>W</kbd><kbd>↑</kbd><span>Accelerate</span></div>
+                    <div class="key-row"><kbd>S</kbd><kbd>↓</kbd><span>Brake / reverse</span></div>
+                    <div class="key-row"><kbd>A</kbd><kbd>D</kbd><span>Steer</span></div>
+                    <div class="key-row"><kbd>SPACE</kbd><span></span><span>Hard brake</span></div>
+                    <div class="key-row"><kbd>R</kbd><span></span><span>Reset car</span></div>
+                    <div class="key-row"><kbd>F</kbd><span></span><span>Fullscreen</span></div>
+                </div>
+            </section>
+        </section>
+
+        <aside id="phone-panel" class="phone-panel">
+            <div class="phone-label">
+                <span class="pixel-kicker">DRIVER PHONE</span>
+                <strong id="phone-car-name">No car selected</strong>
+            </div>
+
+            <div class="phone-device">
+                <div class="phone-speaker"></div>
+                <div id="phone-stage" class="phone-stage">
+                    <div id="phone-empty" class="phone-empty">
+                        <div class="phone-empty-icon">P</div>
+                        <strong>No reservation yet</strong>
+                        <p>Reach the gate and reserve a space from the terminal.</p>
+                    </div>
+
+                    <iframe id="phone-frame" title="Selected car Parkside webpage" hidden></iframe>
+                </div>
+                <div class="phone-home-indicator"></div>
+            </div>
+
+            <div class="phone-help">
+                This is the actual Parkside website at a real mobile viewport. Select another car to switch drivers.
+            </div>
+        </aside>
+    </section>
+</main>
+</body>
+</html>

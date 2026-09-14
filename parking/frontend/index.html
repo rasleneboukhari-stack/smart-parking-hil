@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+    <meta name="theme-color" content="#101918">
+    <title>Parkside — Find your space</title>
+    <link rel="stylesheet" href="/static/style.css?v=parking-map-v7-20260907">
+    <script src="/static/app.js?v=parking-map-v7-20260907" defer></script>
+</head>
+<body>
+<header class="header">
+    <a class="brand" href="/" aria-label="Parkside home">
+        <span class="brand-mark" aria-hidden="true">P<span>•</span></span>
+        <span>parkside<span class="brand-period">.</span></span>
+    </a>
+    <span class="header-caption">A little less searching. A little more arriving.</span>
+    <div id="connection" class="connection" data-state="connecting">
+        <span class="connection-dot"></span>
+        <span id="connection-text">Connecting</span>
+    </div>
+</header>
+
+<main class="layout">
+    <aside class="sidebar" aria-label="Parking and reservation information">
+        <div class="sidebar-heading">
+            <span class="eyebrow">SMART PARKING</span>
+            <h1>Your next stop.<br><span>Sorted.</span></h1>
+            <p>A space for you.<br>One less thing to think about.</p>
+        </div>
+
+        <section class="availability" aria-labelledby="availability-title">
+            <div class="section-heading">
+                <h2 id="availability-title">Garage availability</h2>
+                <span id="availability-scope" class="small-tag">ALL ZONES</span>
+            </div>
+            <div class="availability-main">
+                <strong id="free-count">—</strong>
+                <div>spaces available<span>Choose your perfect spot</span></div>
+            </div>
+            <div class="capacity-track" aria-hidden="true">
+                <span id="free-meter"></span>
+                <span id="reserved-meter"></span>
+                <span id="occupied-meter"></span>
+            </div>
+            <div class="count-row">
+                <span><i class="dot occupied"></i><b id="occupied-count">—</b> occupied</span>
+                <span><i class="dot reserved"></i><b id="reserved-count">—</b> reserved</span>
+            </div>
+        </section>
+
+        <section class="location-card" aria-labelledby="location-title">
+            <div class="section-heading">
+                <h2 id="location-title">Your location</h2>
+                <span id="location-indicator" class="location-indicator" data-state="off">
+                    <i></i><span>Off</span>
+                </span>
+            </div>
+
+            <p id="location-text" class="location-text">
+                Turn on location to make navigation easier.
+            </p>
+
+            <button id="location-button" class="button secondary full">
+                Enable location
+            </button>
+        </section>
+
+        <section class="reservation-card" aria-labelledby="reservation-title">
+            <div class="section-heading">
+                <h2 id="reservation-title">Your reservation</h2>
+                <span class="ticket-symbol" aria-hidden="true">⌁</span>
+            </div>
+
+            <div id="reservation-empty" class="reservation-empty">
+                <div class="empty-icon" aria-hidden="true">P</div>
+                <h3>Make room for arrival.</h3>
+                <p>Select an available space on the map to reserve it.</p>
+            </div>
+
+            <div id="reservation-details" hidden>
+                <div class="ticket-location">
+                    <span id="space-label" class="eyebrow">YOUR SPACE</span>
+                    <strong id="reservation-spot">—</strong>
+                    <span id="reservation-location" class="ticket-zone">FLOOR G · ZONE A · SMART GARAGE</span>
+                </div>
+
+                <div class="ticket-divider"></div>
+
+                <dl class="reservation-meta">
+                    <div>
+                        <dt>Status</dt>
+                        <dd><span id="reservation-status" class="status-pill"></span></dd>
+                    </div>
+                    <div>
+                        <dt>Reference</dt>
+                        <dd id="reservation-reference" class="reference"></dd>
+                    </div>
+                </dl>
+
+                <p id="reservation-help" class="reservation-help"></p>
+
+                <button id="navigate-button" class="button primary full" hidden>
+                    Navigate to my spot
+                </button>
+
+                <button id="find-car-button" class="button gold full" hidden>
+                    Find my car
+                </button>
+
+                <button id="review-button" class="button primary full" hidden>
+                    Review arrival
+                </button>
+
+                <button id="cancel-button" class="button cancel full">
+                    Cancel reservation
+                </button>
+            </div>
+        </section>
+
+        <div class="sidebar-footer">
+            <span class="signal-icon" aria-hidden="true">◉</span>
+            <p><strong>Connected to the ground.</strong><br>Availability updates from live parking sensors.</p>
+        </div>
+    </aside>
+
+    <section class="map-section" aria-labelledby="map-title">
+        <div class="map-heading">
+            <div>
+                <span class="eyebrow">LESS CIRCLING. MORE LIVING.</span>
+                <h2 id="map-title">Find your space.</h2>
+                <p id="map-description">Select a green parking bay to make it yours.</p>
+            </div>
+
+            <div class="map-controls" aria-label="Parking map filters">
+                <div class="selector-group">
+                    <span>Floor</span>
+                    <div id="floor-tabs" class="selector-tabs" aria-label="Select floor"></div>
+                </div>
+
+                <div class="selector-group">
+                    <span>Zone</span>
+                    <div id="zone-tabs" class="selector-tabs" aria-label="Select zone"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+        <div id="navigation-panel" class="navigation-panel" hidden>
+            <div class="navigation-icon" aria-hidden="true">↗</div>
+            <div class="navigation-copy">
+                <span class="eyebrow">NAVIGATION</span>
+                <strong id="navigation-title">Navigate to P01</strong>
+                <p id="navigation-instruction"></p>
+                <small id="navigation-location"></small>
+            </div>
+            <button id="stop-navigation-button" class="button compact">Close</button>
+        </div>
+
+        <div id="move-banner" class="move-banner" hidden>
+            <div>
+                <strong>Let’s find another space.</strong>
+                <span>Select an available bay to move your reservation.</span>
+            </div>
+            <button id="exit-move-button" class="button compact">Go back</button>
+        </div>
+
+        <div id="parked-elsewhere-banner" class="move-banner" hidden>
+            <div>
+                <strong>Where did you park?</strong>
+                <span>Select the occupied bay where your car is actually parked.</span>
+            </div>
+            <button id="exit-parked-elsewhere-button" class="button compact">Go back</button>
+        </div>
+
+        <div
+            id="parking-garage"
+            class="garage map-engine"
+            data-map-mode="embedded"
+            aria-label="Interactive parking map"
+        >
+            <div class="garage-top map-toolbar">
+                <div class="map-toolbar-title">
+                    <span class="garage-label">PARKING PLAN</span>
+                    <span id="garage-location" class="garage-subtitle">Ground · All zones</span>
+                </div>
+
+                <div class="garage-actions">
+                    <span class="garage-chip"><i></i> SENSOR CONNECTED</span>
+
+                    <div class="map-zoom-controls" aria-label="Parking map controls">
+                        <button
+                            id="map-zoom-out"
+                            class="map-zoom-button"
+                            type="button"
+                            aria-label="Zoom out"
+                        >−</button>
+
+                        <button
+                            id="map-zoom-fit"
+                            class="map-zoom-fit"
+                            type="button"
+                            aria-label="Fit the current floor in the map"
+                        >
+                            <span id="map-zoom-value">100%</span>
+                            <small>FIT</small>
+                        </button>
+
+                        <button
+                            id="map-zoom-in"
+                            class="map-zoom-button"
+                            type="button"
+                            aria-label="Zoom in"
+                        >+</button>
+
+                        <button
+                            id="map-fullscreen-toggle"
+                            class="map-fullscreen-button"
+                            type="button"
+                            aria-label="Open full map"
+                            aria-pressed="false"
+                            aria-controls="map-viewport"
+                        >
+                            <span class="fullscreen-open-icon" aria-hidden="true">⛶</span>
+                            <span class="fullscreen-close-icon" aria-hidden="true">×</span>
+                            <span id="map-fullscreen-label">Full map</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!--
+                Real map engine viewport.
+
+                The frontend will no longer arrange bays as an HTML grid.
+                app.js will fetch /layout and render the garage in world
+                coordinates (meters) onto this canvas:
+                  roads
+                  parking bays
+                  entrances/exits
+                  navigation route
+                  selected/reserved spot
+                  user/car position
+
+                Pan/zoom will move a camera over this world, not scale a
+                pre-built parking picture.
+            -->
+            <div
+                id="map-viewport"
+                class="map-viewport map-camera-viewport"
+                tabindex="0"
+                role="application"
+                aria-label="Parking map. Drag to move. Pinch or use the zoom controls to zoom."
+            >
+                <canvas
+                    id="parking-canvas"
+                    class="parking-canvas"
+                    aria-hidden="true"
+                ></canvas>
+
+                <div
+                    id="map-loading"
+                    class="map-status-overlay"
+                    role="status"
+                    aria-live="polite"
+                >
+                    <span class="loader" aria-hidden="true"></span>
+                    <p>Loading parking layout…</p>
+                </div>
+
+                <div
+                    id="map-empty"
+                    class="map-status-overlay"
+                    role="status"
+                    hidden
+                >
+                    <p>No parking layout is available for this floor.</p>
+                </div>
+
+                <!-- Used in embedded mode when the page and the map compete
+                     for the same touch gesture. JS may show it briefly. -->
+                <div
+                    id="map-gesture-hint"
+                    class="map-gesture-hint"
+                    role="status"
+                    hidden
+                >
+                    Use two fingers to move the map
+                </div>
+
+                <div class="map-hud" aria-label="Map information">
+                    <button
+                        id="map-center-control"
+                        class="map-center-control"
+                        type="button"
+                        aria-label="Center map"
+                        title="Center map"
+                    >
+                        <span aria-hidden="true">◎</span>
+                    </button>
+
+                    <div
+                        id="map-scale"
+                        class="map-scale"
+                        aria-label="Map scale"
+                    >
+                        <span></span>
+                        <small>— m</small>
+                    </div>
+
+                    <button
+                        id="map-recenter"
+                        class="map-recenter-button"
+                        type="button"
+                        aria-label="Recenter navigation"
+                        hidden
+                    >
+                        <span aria-hidden="true">↗</span>
+                        Route
+                    </button>
+                </div>
+
+                <!-- Google-Maps-style route status shown inside the map. -->
+                <button
+                    id="map-direct-navigate"
+                    class="map-direct-navigate"
+                    type="button"
+                    hidden
+                    aria-label="Navigate to selected parking space"
+                >
+                    <span class="map-direct-navigate-icon" aria-hidden="true">↗</span>
+                    <span id="map-direct-navigate-label">Navigate</span>
+                </button>
+
+                <section
+                    id="map-route-card"
+                    class="map-route-card"
+                    aria-live="polite"
+                    hidden
+                >
+                    <div class="map-route-icon" aria-hidden="true">↗</div>
+
+                    <div class="map-route-copy">
+                        <span class="map-route-eyebrow">NAVIGATING</span>
+                        <strong id="map-route-title">P01</strong>
+                        <p id="map-route-instruction">Follow the highlighted route.</p>
+                    </div>
+
+                    <button
+                        id="map-route-close"
+                        class="map-route-close"
+                        type="button"
+                        aria-label="Stop map navigation"
+                    >×</button>
+                </section>
+
+                <!--
+                    Spot/place sheet. A map tap selects a place first;
+                    actions happen from here instead of immediately.
+                    JS will populate/enable actions based on live state.
+                -->
+                <section
+                    id="map-place-card"
+                    class="map-place-card"
+                    aria-labelledby="map-place-title"
+                    hidden
+                >
+                    <div class="map-place-handle" aria-hidden="true"></div>
+
+                    <button
+                        id="map-place-close"
+                        class="map-place-close"
+                        type="button"
+                        aria-label="Close selected place"
+                    >×</button>
+
+                    <div class="map-place-main">
+                        <div
+                            id="map-place-badge"
+                            class="map-place-badge"
+                            data-status="FREE"
+                            aria-hidden="true"
+                        >P</div>
+
+                        <div class="map-place-copy">
+                            <span
+                                id="map-place-status"
+                                class="map-place-status"
+                            >AVAILABLE</span>
+
+                            <h3 id="map-place-title">Parking space P01</h3>
+
+                            <p id="map-place-meta">
+                                Ground · Zone A
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="map-place-actions">
+                        <button
+                            id="map-place-navigate"
+                            class="map-place-action map-place-action-primary"
+                            type="button"
+                        >
+                            <span aria-hidden="true">↗</span>
+                            Navigate
+                        </button>
+
+                        <button
+                            id="map-place-reserve"
+                            class="map-place-action map-place-action-secondary"
+                            type="button"
+                        >
+                            Reserve
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Canvas maps are visual; app.js will populate this with
+                 accessible spot controls for keyboard/screen-reader users. -->
+            <div
+                id="map-accessibility-layer"
+                class="map-accessibility-layer"
+                aria-label="Parking spaces"
+            ></div>
+
+            <div class="garage-bottom">
+                <span><span aria-hidden="true">↗</span> Select a bay to reserve</span>
+                <span id="updated-at">Waiting for live data</span>
+            </div>
+        </div>
+
+        <div class="map-footer">
+            <div class="legend" aria-label="Parking status legend">
+                <span><i class="legend-bay free"></i>Available</span>
+                <span><i class="legend-bay occupied"></i>Occupied</span>
+                <span><i class="legend-bay reserved"></i>Reserved</span>
+                <span><i class="legend-bay yourspace"></i>Your space</span>
+                <span><i class="legend-bay mycar"></i>Your car</span>
+            </div>
+            <span class="map-tip">Good parking. Better days.</span>
+        </div>
+
+        <div class="how-it-works">
+            <div><span>01</span><p><strong>Pick your space</strong>Choose an available bay.</p></div>
+            <div><span>02</span><p><strong>Make your way</strong>Use navigation to find your reserved bay.</p></div>
+            <div><span>03</span><p><strong>Find your car</strong>Your parked car stays highlighted in gold.</p></div>
+        </div>
+    </section>
+</main>
+
+<dialog id="arrival-dialog" aria-labelledby="arrival-title" aria-describedby="arrival-description">
+    <div class="arrival-content">
+        <div class="arrival-icon" aria-hidden="true">P<span>✓</span></div>
+        <span class="eyebrow">A QUICK ARRIVAL CHECK</span>
+        <h2 id="arrival-title">A car just parked in your space.</h2>
+        <p id="arrival-description">Is it your car?</p>
+        <div id="arrival-spot" class="arrival-spot"></div>
+        <p id="dialog-error" class="dialog-error" role="alert" hidden></p>
+
+        <button id="confirm-button" class="button primary full">
+            Yes, that’s my car <span aria-hidden="true">↗</span>
+        </button>
+
+        <button id="not-my-car-button" class="button secondary full">
+            No, that’s not my car
+        </button>
+
+        <button id="reserve-another-button" class="button primary full" hidden>
+            Reserve another spot <span aria-hidden="true">↗</span>
+        </button>
+
+        <button id="parked-elsewhere-button" class="button secondary full" hidden>
+            I parked in another spot
+        </button>
+
+        <button id="arrival-back-button" class="text-button" hidden>
+            Back
+        </button>
+
+        <button id="later-button" class="text-button">
+            I’ll check in a moment
+        </button>
+    </div>
+</dialog>
+</body>
+</html>
