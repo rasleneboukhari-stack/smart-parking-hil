@@ -1,55 +1,125 @@
-# Smart Parking System - Hardware-in-the-Loop
+# Smart Parking System
 
-An end-to-end smart parking platform combining simulation, embedded control, hardware-in-the-loop testing, and a web application.
-
-![Architecture](docs/architecture.png)
+A complete embedded smart parking system combining simulation, backend
+services, Hardware-in-the-Loop (HIL), embedded firmware, and a web
+application.
 
 ## Overview
 
-The system simulates parking sensors using a 2D environment, converts virtual distances into hardware sensor behavior, and lets an ESP32-S3 controller determine parking occupancy.
+The system contains:
 
-## Main Components
+-   2D parking simulator
+-   FastAPI backend gateway
+-   Python HIL bridge
+-   Wokwi custom HIL chip
+-   ESP32-S3 embedded controller
+-   Web application
 
-- 2D Parking Simulator (HTML/CSS/JavaScript)
-- FastAPI Backend (Python)
-- HIL Bridge (Python + PySerial)
-- ESP32-S3 Embedded Controller (C++ / PlatformIO)
-- Custom Wokwi HIL Chip (C/WebAssembly)
-- MQTT Communication (HiveMQ)
-- Web Application
-- SQLite Storage
+The parking layout is flexible and configurable. Different parking
+layouts, zones, and parking spot configurations can be supported by
+changing configuration files without modifying the core architecture.
 
-## Embedded Concept
+## Architecture
 
-The ESP32 does not receive occupancy states directly.
+Communication flow:
 
-It receives simulated sensor behavior through the HIL environment, measures the virtual ultrasonic echo response, and decides:
+    2D Parking Simulator
+            |
+            | HTTP / REST
+            v
+    FastAPI Gateway
+            |
+            | Internal API
+            v
+    Python HIL Bridge
+            |
+            | RFC2217 Serial
+            v
+    Wokwi Custom HIL Chip
+            |
+            | Ultrasonic Echo Simulation
+            v
+    ESP32-S3 Controller
+            |
+            | MQTT
+            v
+    Web Application
 
-- FREE
-- OCCUPIED
+![Architecture](docs/images/architecture.png)
 
-## Features
+## Simulation Environment
 
-- 16 parking spots controlled by one ESP32-S3 zone controller
-- Virtual ultrasonic sensor array
-- Real-time parking status
-- Reservation workflow
-- Hardware-in-the-loop validation
+The simulator generates vehicle movements, parking scenarios, and
+virtual sensor distances.
 
+![Simulator](docs/images/simulator.png)
 
-## Screenshots
+## Backend Gateway
 
-![hil_debug.png](docs/images/hil_debug.png)
+The FastAPI gateway manages parking states, receives simulation data,
+exposes APIs, and communicates with the HIL bridge.
 
-![simulator_overview.png](docs/images/simulator_overview.png)
+![Gateway](docs/images/gateway.png)
 
-![parking_selection.png](docs/images/parking_selection.png)
+## Hardware-in-the-Loop
 
-![reservation_notification.png](docs/images/reservation_notification.png)
+The HIL system allows the ESP32 firmware to interact with simulated
+sensors.
 
-![parked_car_status.png](docs/images/parked_car_status.png)
+Flow:
 
-![mobile_map_view.png](docs/images/mobile_map_view.png)
+1.  Simulator generates distances.
+2.  HIL bridge converts data into sensor commands.
+3.  Wokwi custom chip generates ultrasonic echo pulses.
+4.  ESP32 processes the signals like real hardware.
 
-![reservation_flow.png](docs/images/reservation_flow.png)
+![HIL](docs/images/hil_system.png)
 
+## Web Application
+
+The web interface provides:
+
+-   Live parking status
+-   Reservations
+-   Vehicle tracking
+-   Notifications
+
+![Web App](docs/images/web_app.png)
+
+## Running
+
+``` bash
+./run_all.sh
+```
+
+Starts the gateway, HIL bridge, simulator, and web application.
+
+## Structure
+
+    smart-parking-hil/
+    ├── frontend/
+    ├── gateway/
+    ├── src/
+    ├── layouts/
+    ├── docs/
+    ├── run_all.sh
+    └── README.md
+
+## Technologies
+
+-   ESP32-S3
+-   C++
+-   Python
+-   FastAPI
+-   MQTT
+-   PySerial
+-   Wokwi
+-   PlatformIO
+-   HTML/CSS/JavaScript
+-   Git
+-   Linux
+
+## Goals
+
+This project demonstrates embedded development, HIL testing, IoT
+communication, backend design, and full system integration.
