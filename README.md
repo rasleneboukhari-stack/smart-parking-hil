@@ -33,7 +33,7 @@ FastAPI service responsible for:
 - Providing APIs
 - Communicating with the HIL bridge
 
-![Gateway](docs/gateway.png)
+![Gateway](docs/hil_system.png)
 
 ### Hardware-in-the-Loop System
 
@@ -58,7 +58,8 @@ Custom Wokwi HIL Chip
 ESP32-S3 Controller
 ```
 
-![HIL System](docs/hil_system.png)
+![HIL System](docs/Wokwi.png)
+
 
 ### Web Application
 
@@ -69,6 +70,7 @@ Provides:
 - Driver interface
 
 ![Web Application](docs/web_app.png)
+![Web Application](docs/reservation_flow.png)
 
 ## Running
 
